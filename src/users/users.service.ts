@@ -41,11 +41,11 @@ export class UsersService {
   }
 
   findOne(id: number) {
-    return this.usersRepository.findOne({ where: { id } });
+    return this.usersRepository.findOneOrFail({ where: { id } });
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.usersRepository.findOne({ where: { id } });
+    const user = await this.usersRepository.findOneOrFail({ where: { id } });
     user.isActive = updateUserDto.isActive;
     if (updateUserDto.password) {
       const passwordHash = this.generatePasswordHash(updateUserDto.password);
