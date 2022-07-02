@@ -10,9 +10,10 @@ async function bootstrap() {
     .setTitle('Tasks Demo')
     .setDescription('The tasks API description')
     .setVersion('1.0')
-    .addTag('tasks')
     .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    ignoreGlobalPrefix: true,
+  });
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
