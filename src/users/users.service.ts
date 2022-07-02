@@ -15,11 +15,10 @@ export class UsersService {
   ) {}
 
   create(createUserDto: CreateUserDto) {
-    console.log(createUserDto);
     const passwordHash = this.generatePasswordHash(createUserDto.password);
     const user = new User();
     user.username = createUserDto.username;
-    user.password_hash = passwordHash;
+    user.passwordHash = passwordHash;
     return this.usersRepository.insert(user);
   }
 
@@ -28,9 +27,9 @@ export class UsersService {
     if (listUsersDto.username) {
       where.username = listUsersDto.username;
     }
-    // if (listUsersDto.isActive) {
-    //   where.isActive = listUsersDto.isActive;
-    // }
+    if (listUsersDto.isActive) {
+      where.isActive = listUsersDto.isActive;
+    }
     const { page, size } = listUsersDto;
     return this.usersRepository
       .createQueryBuilder()
@@ -46,10 +45,10 @@ export class UsersService {
 
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.usersRepository.findOne({ where: { id } });
-    user.is_active = updateUserDto.isActive;
+    user.isActive = updateUserDto.isActive;
     if (updateUserDto.password) {
       const passwordHash = this.generatePasswordHash(updateUserDto.password);
-      user.password_hash = passwordHash;
+      user.passwordHash = passwordHash;
     }
     return this.usersRepository.save(user);
   }

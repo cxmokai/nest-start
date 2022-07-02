@@ -9,14 +9,14 @@ export class User {
   username: string;
 
   @Column()
-  password_hash: string;
+  passwordHash: string;
 
   @Column({ default: true })
-  is_active: boolean;
+  isActive: boolean;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  create_time: Date;
+  createTime: Date;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  update_time: Date;
+  updateTime: Date;
 }
