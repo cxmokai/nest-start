@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createHash } from 'crypto';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ListUsersDto } from './dto/list-users.dto';
-import { User } from './entities/user.entity';
+import { CreateUserDto, UpdateUserDto, ListUsersDto } from './user.dto';
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
@@ -14,15 +12,17 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
     const passwordHash = this.generatePasswordHash(createUserDto.password);
     const user = new User();
     user.username = createUserDto.username;
     user.passwordHash = passwordHash;
-    return this.usersRepository.insert(user);
+    const _user = await this.usersRepository.save(user);
+    delete _user.passwordHash;
+    return _user;
   }
 
-  findAll(listUsersDto: ListUsersDto) {
+  async findAll(listUsersDto: ListUsersDto) {
     const where: Record<string, any> = {};
     if (listUsersDto.username) {
       where.username = listUsersDto.username;
@@ -31,12 +31,13 @@ export class UsersService {
       where.isActive = listUsersDto.isActive;
     }
     const { page, size } = listUsersDto;
-    return this.usersRepository
+    const [userList, total] = await this.usersRepository
       .createQueryBuilder()
       .where(where)
       .skip((page - 1) * size)
       .limit(size)
       .getManyAndCount();
+    return { data: userList, total };
   }
 
   findOne(id: number) {
