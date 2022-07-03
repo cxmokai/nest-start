@@ -25,6 +25,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter(adapterHost));
 
   const config = new DocumentBuilder()
+    .addBearerAuth()
     .setTitle('Tasks Demo')
     .setDescription('The tasks API description')
     .setVersion('1.0')

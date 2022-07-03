@@ -1,10 +1,11 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { IsString, IsInt, IsBoolean } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+import { IsString, IsInt, IsBoolean, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
   readonly username: string;
-  // @IsString()
+  @IsString()
   readonly password: string;
 }
 
@@ -15,11 +16,19 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
 
 export class ListUsersDto {
   @IsString()
+  @IsOptional()
   readonly username?: string;
+
+  @Transform(({ value }) => value === 'true')
   @IsBoolean()
+  @IsOptional()
   readonly isActive?: boolean;
+
+  @Transform(({ value }) => +value)
   @IsInt()
   readonly page: number;
+
+  @Transform(({ value }) => +value)
   @IsInt()
   readonly size: number;
 }

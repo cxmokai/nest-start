@@ -27,7 +27,7 @@ export class UsersService {
     if (listUsersDto.username) {
       where.username = listUsersDto.username;
     }
-    if (listUsersDto.isActive) {
+    if (listUsersDto.isActive !== undefined) {
       where.isActive = listUsersDto.isActive;
     }
     const { page, size } = listUsersDto;
@@ -40,8 +40,14 @@ export class UsersService {
     return { data: userList, total };
   }
 
-  findOne(id: number) {
-    return this.usersRepository.findOneOrFail({ where: { id } });
+  findOne(username: string): Promise<User>;
+  findOne(id: number): Promise<User>;
+  findOne(param: string | number) {
+    if (typeof param === 'string') {
+      return this.usersRepository.findOneOrFail({ where: { username: param } });
+    } else {
+      return this.usersRepository.findOneOrFail({ where: { id: param } });
+    }
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
@@ -58,7 +64,7 @@ export class UsersService {
     return this.usersRepository.delete(id);
   }
 
-  private generatePasswordHash(password: string) {
+  generatePasswordHash(password: string) {
     return createHash('md5').update(password).digest('hex');
   }
 }
