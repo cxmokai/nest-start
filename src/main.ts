@@ -1,5 +1,5 @@
-import { NestFactory, HttpAdapterHost } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { NestFactory, HttpAdapterHost, Reflector } from '@nestjs/core';
+import { ValidationPipe, Logger, ClassSerializerInterceptor } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as morgan from 'morgan';
 import { AppModule } from './app.module';
@@ -18,6 +18,8 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const adapterHost = app.get(HttpAdapterHost);
   app.useGlobalFilters(new AllExceptionsFilter(adapterHost));
