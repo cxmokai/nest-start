@@ -34,7 +34,7 @@ export class UsersService {
     const [userList, total] = await this.usersRepository
       .createQueryBuilder()
       .where(where)
-      .skip((page - 1) * size)
+      .offset((page - 1) * size)
       .limit(size)
       .getManyAndCount();
     return { data: userList, total };

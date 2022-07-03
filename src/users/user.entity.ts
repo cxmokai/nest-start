@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, Index } from 'typeorm';
 import { Exclude } from 'class-transformer';
+import { Task } from 'src/tasks/task.entity';
 
 @Entity()
 export class User {
@@ -7,6 +8,7 @@ export class User {
   id: number;
 
   @Column({ unique: true })
+  @Index()
   username: string;
 
   @Exclude({ toPlainOnly: true })
@@ -28,4 +30,7 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updateTime: Date;
+
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 }
