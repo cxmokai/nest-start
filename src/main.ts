@@ -3,7 +3,7 @@ import { ValidationPipe, Logger, ClassSerializerInterceptor } from '@nestjs/comm
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as morgan from 'morgan';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './all-exceptions.filter';
+import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,7 +14,7 @@ async function bootstrap() {
   // 验证和转换dto
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
-  // 序列化
+  // 序列化拦截器
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // 异常处理

@@ -2,30 +2,35 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
-  ManyToOne,
+  OneToMany,
   Index,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from 'src/users/user.entity';
+import { Exclude } from 'class-transformer';
+import { Task } from 'src/modules/tasks/task.entity';
 
 @Entity()
-export class Task {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  title: string;
+  @Column({ unique: true })
+  @Index()
+  username: string;
 
-  @Column({ default: false })
-  isDone: boolean;
+  @Exclude({ toPlainOnly: true })
+  @Column()
+  passwordHash: string;
+
+  @Column({ default: true })
+  isActive: boolean;
 
   // @Column({
   //   type: 'timestamp',
   //   default: () => 'CURRENT_TIMESTAMP',
   // })
   @CreateDateColumn()
-  @Index()
   createTime: Date;
 
   // @Column({
@@ -36,6 +41,6 @@ export class Task {
   @UpdateDateColumn()
   updateTime: Date;
 
-  @ManyToOne(() => User, (user) => user.tasks)
-  user: User;
+  @OneToMany(() => Task, (task) => task.user)
+  tasks: Task[];
 }
