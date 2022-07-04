@@ -7,9 +7,21 @@ import { AllExceptionsFilter } from './all-exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+  // api前缀
   app.setGlobalPrefix('api');
 
+  // 验证和转换dto
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
+
+  // 序列化
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
+  // 异常处理
+  const adapterHost = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new AllExceptionsFilter(adapterHost));
+
+  // api访问日志
   const logger = new Logger('Request');
   app.use(
     morgan('tiny', {
@@ -19,11 +31,7 @@ async function bootstrap() {
     }),
   );
 
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-
-  const adapterHost = app.get(HttpAdapterHost);
-  app.useGlobalFilters(new AllExceptionsFilter(adapterHost));
-
+  // swagger
   const config = new DocumentBuilder()
     .addBearerAuth()
     .setTitle('Tasks Demo')
