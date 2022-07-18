@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
@@ -25,6 +26,7 @@ export class TasksController {
    * 创建任务
    */
   @Post()
+  @HttpCode(200)
   create(@Body() createTaskDto: CreateTaskDto) {
     console.log(createTaskDto);
     return this.tasksService.create(createTaskDto);
