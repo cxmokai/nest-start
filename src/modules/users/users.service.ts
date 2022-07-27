@@ -53,6 +53,9 @@ export class UsersService {
   async update(id: number, updateUserDto: UpdateUserDto) {
     const user = await this.usersRepository.findOneOrFail({ where: { id } });
     user.isActive = updateUserDto.isActive;
+    if (updateUserDto.username) {
+      user.username = updateUserDto.username;
+    }
     if (updateUserDto.password) {
       const passwordHash = this.generatePasswordHash(updateUserDto.password);
       user.passwordHash = passwordHash;
